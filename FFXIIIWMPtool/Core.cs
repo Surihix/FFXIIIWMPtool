@@ -9,7 +9,9 @@ namespace FFXIIIWMPtool
         {
             if (args.Length < 2)
             {
-                CmnMethods.ErrorExit("Error: Enough arguments not specified\nMust be: FFXIIIWMPtool.exe '-u' or '-r' 'movie_items db file' or 'WMP file or unpacked WMP directory'");
+                CmnMethods.ErrorExit("Error: Enough arguments not specified\n" +
+                    "\nFor Unpacking: FFXIIIWMPtool.exe -u \"movie_items db file\" \"WMP file\" " +
+                    "\nFor Repacking: FFXIIIWMPtool.exe -r \"movie_items db file\" \"unpacked WMP folder\"");
             }
 
             var actionEnumString = args[0].Replace("-", "");
