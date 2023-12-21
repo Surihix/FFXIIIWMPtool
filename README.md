@@ -10,5 +10,6 @@ Commandline usage examples:
 <br>``FFXIIIWMPtool.exe -r "movie_items.win32.wdb file" "_z002.win32.wmp"``
 
 ### Important
-- When unpacking and repacking english voice over movie files, make sure to check if both the wdb file and the WMP file has a ``_us`` appended to the filename just before the extension. for the english voiceover files, the filenames would be ``movie_items_us.win32.wdb`` and ``z002_us.win32.wmp``. the above usage example uses the Japanese voiceover version of these two files.
+- When unpacking and repacking the english voice over movie files, make sure to check if both the wdb file and the WMP file has a ``_us`` appended to the filename just before the extension. for the english voiceover files, the filenames would be ``movie_items_us.win32.wdb`` and ``z002_us.win32.wmp``. the above usage example uses the Japanese voiceover version of these two files.
+  
 - The PC and the Xbox 360 versions will unpack the movie files with a ``.bik`` extension while the PS3 version movies will unpack with a ``.pam`` extension. the ``.bik`` files can be played via RADtools software while the ``.pam`` files can be played via   the PS3StreamViewer app included with Sony's PS3PAMF Tools suite (goggle this as I can't link it here for legal reasons).
