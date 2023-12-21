@@ -9,6 +9,8 @@ Commandline usage examples:
 <br>``FFXIIIWMPtool.exe -u "movie_items.win32.wdb file" "z002.win32.wmp"``
 <br>``FFXIIIWMPtool.exe -r "movie_items.win32.wdb file" "_z002.win32.wmp"``
 
+Note: For the ``-r`` switch, the unpacked WMP folder name is specified in the example. the ``_`` in the name indicates the name of the unpacked folder.
+
 ### Important
 - When unpacking and repacking the english voice over movie files, make sure to check if both the wdb file and the WMP file has a ``_us`` appended to the filename just before the extension. for the english voiceover files, the filenames would be ``movie_items_us.win32.wdb`` and ``z002_us.win32.wmp``. the above usage example uses the Japanese voiceover version of these two files.
   
