@@ -121,8 +121,7 @@ namespace FFXIIIWMPtool
                 }
             }
 
-            Console.WriteLine("Finished repacking file(s) into " + Path.GetFileName(newWMPfile));
-            Console.ReadLine();
+            Console.WriteLine("Finished repacking file(s) into " + "\"" + Path.GetFileName(newWMPfile) + "\"");
         }
     }
 }

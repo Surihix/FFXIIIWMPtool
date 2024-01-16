@@ -96,14 +96,13 @@ namespace FFXIIIWMPtool
 
                     if (unpackCount.Equals(0))
                     {
-                        Console.WriteLine("Warning: No files were unpacked from " + Path.GetFileName(inWMPfile));
+                        Console.WriteLine("Warning: No files were unpacked from " + "\"" + Path.GetFileName(inWMPfile) + "\"");
                         Console.WriteLine("");
                     }
                 }
             }
 
-            Console.WriteLine("Finished unpacking file(s) from " + Path.GetFileName(inWMPfile));
-            Console.ReadLine();
+            Console.WriteLine("Finished unpacking file(s) from " + "\"" + Path.GetFileName(inWMPfile) + "\"");
         }
     }
 }
