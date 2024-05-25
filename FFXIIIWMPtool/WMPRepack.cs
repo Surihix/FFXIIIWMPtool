@@ -1,8 +1,6 @@
-﻿using BinaryReaderEx;
-using BinaryWriterEx;
-using StreamExtension;
-using System;
+﻿using System;
 using System.IO;
+using System.Text;
 
 namespace FFXIIIWMPtool
 {
@@ -10,15 +8,12 @@ namespace FFXIIIWMPtool
     {
         public static void RepackWMP(string inMovieItemsDbFile, string inWMPfolder)
         {
-            Console.WriteLine("");
-
             var inMovieItemsDbFileName = Path.GetFileName(inMovieItemsDbFile);
             var inWMPfolderName = Path.GetFileName(inWMPfolder);
             var wmpId = inWMPfolderName.Replace("_us", "");
 
-            var wmpVars = new WMP();
-            FMVextension(inMovieItemsDbFileName, wmpVars);
-            VOSuffix(inMovieItemsDbFileName, wmpVars);
+            var wmpVars = new WMPVariables();
+            WMPMethods.ProcessVariables(inMovieItemsDbFileName, wmpVars);
 
             var inWMPfolderDir = Path.GetDirectoryName(inWMPfolder);
             var newWMPfile = Path.Combine(inWMPfolderDir, wmpId + wmpVars.VoSuffix + wmpVars.PlatformCode + ".wmp");
@@ -26,6 +21,12 @@ namespace FFXIIIWMPtool
             if (File.Exists(newWMPfile))
             {
                 File.Delete(newWMPfile);
+            }
+
+            using (var newWMPstream = new FileStream(newWMPfile, FileMode.CreateNew, FileAccess.Write))
+            {
+                newWMPstream.Seek(0, SeekOrigin.Begin);
+                newWMPstream.Write(Encoding.UTF8.GetBytes("WMP\0Ver:0.01\0\0\0\0"), 0, 16);
             }
 
 
@@ -63,24 +64,13 @@ namespace FFXIIIWMPtool
                             var fmvSize = dbReader.ReadBytesUInt32(true);
                             var fmvStart = dbReader.ReadBytesUInt64(true);
 
-                            if (fmvWMPid.Equals(wmpId))
+                            if (fmvWMPid == wmpId)
                             {
                                 var fmvFile = Path.Combine(inWMPfolderDir, inWMPfolderName, fmvName + wmpVars.VoSuffix + wmpVars.FmvFileExtension);
 
                                 if (File.Exists(fmvFile))
                                 {
                                     var newFMVsize = (uint)new FileInfo(fmvFile).Length;
-
-                                    if (!File.Exists(newWMPfile))
-                                    {
-                                        using (var newWMP = new StreamWriter(newWMPfile))
-                                        {
-                                            newWMP.Write("WMP\0");
-                                            newWMP.Write("Ver:0.01");
-                                            newWMP.Write("\0\0\0\0");
-                                        }
-                                    }
-
                                     var newFMVstart = (ulong)new FileInfo(newWMPfile).Length;
 
                                     Console.WriteLine("Repacking " + fmvFile + " to " + Path.GetFileName(newWMPfile));
@@ -89,7 +79,8 @@ namespace FFXIIIWMPtool
                                     {
                                         using (var fmvStream = new FileStream(fmvFile, FileMode.Open, FileAccess.Read))
                                         {
-                                            fmvStream.ExCopyTo(newWMPStream, 0, newFMVsize);
+                                            fmvStream.Seek(0, SeekOrigin.Begin);
+                                            fmvStream.CopyStreamTo(newWMPStream, newFMVsize, false);
                                         }
                                     }
 
@@ -111,7 +102,7 @@ namespace FFXIIIWMPtool
 
                         Console.WriteLine("");
 
-                        if (repackCount.Equals(0))
+                        if (repackCount == 0)
                         {
                             Console.WriteLine("Warning: No file(s) were repacked");
                             Console.WriteLine("");

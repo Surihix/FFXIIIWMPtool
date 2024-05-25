@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace FFXIIIWMPtool
 {
@@ -7,17 +8,25 @@ namespace FFXIIIWMPtool
     {
         static void Main(string[] args)
         {
+            if (args.Length == 1 && args.Contains("-h") || args.Contains("-?"))
+            {
+                Console.WriteLine("For Unpacking: FFXIIIWMPtool.exe -u \"movie_items db file\" \"WMP file\"");
+                Console.WriteLine("For Repacking: FFXIIIWMPtool.exe -r \"movie_items db file\" \"unpacked WMP folder\"");
+                Console.ReadLine();
+                Environment.Exit(0);
+            }
+
             if (args.Length < 2)
             {
-                CmnMethods.ErrorExit("Error: Enough arguments not specified\n" +
-                    "\nFor Unpacking: FFXIIIWMPtool.exe -u \"movie_items db file\" \"WMP file\" " +
-                    "\nFor Repacking: FFXIIIWMPtool.exe -r \"movie_items db file\" \"unpacked WMP folder\"");
+                Console.WriteLine("Warning: Enough arguments not specified. for more info, please launch this tool with -h or -? switches.");
+                Console.ReadLine();
+                Environment.Exit(0);
             }
 
             var actionEnumString = args[0].Replace("-", "");
 
-            var convertedAction = new CmnMethods.ActionEnums();
-            if (Enum.TryParse(actionEnumString, false, out CmnMethods.ActionEnums resultEnum))
+            var convertedAction = new ActionEnums();
+            if (Enum.TryParse(actionEnumString, false, out ActionEnums resultEnum))
             {
                 convertedAction = resultEnum;
             }
@@ -27,40 +36,50 @@ namespace FFXIIIWMPtool
 
             if (!File.Exists(inMovieItemsDbFile))
             {
-                CmnMethods.ErrorExit("Error: Specified movie items db file does not exist");
+                WMPMethods.ErrorExit("Error: Specified movie items db file does not exist");
             }
+
+            Console.WriteLine("");
 
             try
             {
                 switch (convertedAction)
                 {
-                    case CmnMethods.ActionEnums.u:
+                    case ActionEnums.u:
                         if (!File.Exists(inWMPFileOrFolder))
                         {
-                            CmnMethods.ErrorExit("Error: Specified WMP file does not exist");
+                            WMPMethods.ErrorExit("Error: Specified WMP file does not exist");
                         }
 
                         WMP.UnpackWMP(inMovieItemsDbFile, inWMPFileOrFolder);
                         break;
 
-                    case CmnMethods.ActionEnums.r:
+                    case ActionEnums.r:
                         if (!Directory.Exists(inWMPFileOrFolder))
                         {
-                            CmnMethods.ErrorExit("Error: Specified unpacked WMP directory to repack does not exist");
+                            WMPMethods.ErrorExit("Error: Specified unpacked WMP directory to repack does not exist");
                         }
 
                         WMP.RepackWMP(inMovieItemsDbFile, inWMPFileOrFolder);
                         break;
 
                     default:
-                        CmnMethods.ErrorExit("Error: Proper tool action is not specified.\nMust be: '-u' or '-r'");
+                        WMPMethods.ErrorExit("Error: Proper tool action is not specified.\nMust be: '-u' or '-r'");
                         break;
                 }
             }
             catch (Exception ex)
             {
-                CmnMethods.ErrorExit("Error: " + ex);
+                Console.WriteLine("Error: " + ex);
+                Console.ReadLine();
+                Environment.Exit(2);
             }
+        }
+
+        enum ActionEnums
+        {
+            u,
+            r
         }
     }
 }

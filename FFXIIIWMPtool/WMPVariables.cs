@@ -1,6 +1,6 @@
 ﻿namespace FFXIIIWMPtool
 {
-    internal partial class WMP
+    internal class WMPVariables
     {
         public string FmvFileExtension { get; set; }
 

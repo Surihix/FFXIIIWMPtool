@@ -1,6 +1,4 @@
-﻿using BinaryReaderEx;
-using StreamExtension;
-using System;
+﻿using System;
 using System.IO;
 
 namespace FFXIIIWMPtool
@@ -9,8 +7,6 @@ namespace FFXIIIWMPtool
     {
         public static void UnpackWMP(string inMovieItemsDbFile, string inWMPfile)
         {
-            Console.WriteLine("");
-
             var inWMPfileDir = Path.GetDirectoryName(inWMPfile);
 
             var inMovieItemsDbFileName = Path.GetFileName(inMovieItemsDbFile);
@@ -21,9 +17,8 @@ namespace FFXIIIWMPtool
             var wmpOutFolder = Path.GetFileNameWithoutExtension(inWMPfileName).Replace(".win32", "").Replace(".ps3", "").
                 Replace("x360", "");
 
-            var wmpVars = new WMP();
-            FMVextension(inMovieItemsDbFileName, wmpVars);
-            VOSuffix(inMovieItemsDbFileName, wmpVars);
+            var wmpVars = new WMPVariables();
+            WMPMethods.ProcessVariables(inMovieItemsDbFileName, wmpVars);
 
 
             using (var dbStream = new FileStream(inMovieItemsDbFile, FileMode.Open, FileAccess.Read))
@@ -58,7 +53,7 @@ namespace FFXIIIWMPtool
                         var fmvSize = dbReader.ReadBytesUInt32(true);
                         var fmvStart = dbReader.ReadBytesUInt64(true);
 
-                        if (fmvWMPid.Equals(wmpId))
+                        if (fmvWMPid == wmpId)
                         {
                             var fmvExtractDir = Path.Combine(inWMPfileDir, wmpOutFolder);
                             if (!Directory.Exists(fmvExtractDir))
@@ -79,7 +74,8 @@ namespace FFXIIIWMPtool
 
                                 using (var fmvOutStream = new FileStream(fmvFile, FileMode.OpenOrCreate, FileAccess.Write))
                                 {
-                                    wmpStream.ExCopyTo(fmvOutStream, (long)fmvStart, fmvSize);
+                                    wmpStream.Seek((long)fmvStart, SeekOrigin.Begin);
+                                    wmpStream.CopyStreamTo(fmvOutStream, fmvSize, false);
                                 }
 
                                 unpackCount++;
@@ -94,7 +90,7 @@ namespace FFXIIIWMPtool
 
                     Console.WriteLine("");
 
-                    if (unpackCount.Equals(0))
+                    if (unpackCount == 0)
                     {
                         Console.WriteLine("Warning: No files were unpacked from " + "\"" + Path.GetFileName(inWMPfile) + "\"");
                         Console.WriteLine("");

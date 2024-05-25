@@ -1,8 +1,17 @@
-﻿namespace FFXIIIWMPtool
+﻿using System;
+
+namespace FFXIIIWMPtool
 {
-    internal partial class WMP
+    internal class WMPMethods
     {
-        static void FMVextension(string inMovieItemsDbFileName, WMP wmpVars)
+        public static void ErrorExit(string errorMsg)
+        {
+            Console.WriteLine(errorMsg);
+            Console.ReadLine();
+            Environment.Exit(1);
+        }
+
+        public static void ProcessVariables(string inMovieItemsDbFileName, WMPVariables wmpVars)
         {
             if (inMovieItemsDbFileName.Contains(".win32."))
             {
@@ -19,10 +28,7 @@
                 wmpVars.PlatformCode = ".x360";
                 wmpVars.PlatformCode = ".bik";
             }
-        }
 
-        static void VOSuffix(string inMovieItemsDbFileName, WMP wmpVars)
-        {
             if (inMovieItemsDbFileName.Contains("us."))
             {
                 wmpVars.VoSuffix = "_us";
