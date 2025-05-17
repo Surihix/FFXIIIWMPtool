@@ -33,6 +33,7 @@ namespace FFXIIIWMPtool
 
 
                     uint startVal = 144;
+                    var fmvSizeValBuffer = new byte[4];
                     int unpackCount = 0;
 
                     for (int f = 0; f < totalFMVs; f++)
@@ -74,6 +75,13 @@ namespace FFXIIIWMPtool
 
                                 using (var fmvOutStream = new FileStream(fmvFile, FileMode.OpenOrCreate, FileAccess.Write))
                                 {
+                                    if (wmpVars.FmvFileExtension == ".bik")
+                                    {
+                                        wmpStream.Seek((long)fmvStart + 4, SeekOrigin.Begin);
+                                        wmpStream.Read(fmvSizeValBuffer, 0, 4);
+                                        fmvSize = BitConverter.ToUInt32(fmvSizeValBuffer, 0) + 8;
+                                    }
+
                                     wmpStream.Seek((long)fmvStart, SeekOrigin.Begin);
                                     wmpStream.CopyStreamTo(fmvOutStream, fmvSize, false);
                                 }
